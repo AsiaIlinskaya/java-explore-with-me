@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component; // <--- добавь это!
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Component // <--- вот это обязательно!
+@Component
 public class StatClient {
     private final RestTemplate rest;
-    private static final String STAT_SERVER_URL = "http://stat-server:9090"; // ← лучше не localhost в Docker
+    private static final String STAT_SERVER_URL = "http://stat-server:9090";
 
     public StatClient() {
         this.rest = new RestTemplate();
