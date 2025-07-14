@@ -1,11 +1,10 @@
 package ru.practicum;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component; // <--- добавь это!
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
@@ -14,12 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component // <--- вот это обязательно!
 public class StatClient {
     private final RestTemplate rest;
-
-    @Value("${stat-server.url}")
-    private String statServerUrl;
+    private static final String STAT_SERVER_URL = "http://stat-server:9090"; // ← лучше не localhost в Docker
 
     public StatClient() {
         this.rest = new RestTemplate();
@@ -29,7 +26,7 @@ public class StatClient {
         HttpEntity<HitDto> requestEntity = new HttpEntity<>(hitDto);
         log.info("Отправка POST-запроса в StatServer: {}", hitDto);
         try {
-            rest.exchange(statServerUrl + "/hit", HttpMethod.POST, requestEntity, Void.class);
+            rest.exchange(STAT_SERVER_URL + "/hit", HttpMethod.POST, requestEntity, Void.class);
             log.info("POST-запрос успешно выполнен.");
         } catch (Exception e) {
             log.error("Ошибка при отправке POST-запроса в StatServer", e);
@@ -42,7 +39,7 @@ public class StatClient {
         parameters.put("end", end);
         parameters.put("unique", unique);
 
-        StringBuilder pathBuilder = new StringBuilder(statServerUrl)
+        StringBuilder pathBuilder = new StringBuilder(STAT_SERVER_URL)
                 .append("/stats?start={start}&end={end}&unique={unique}");
 
         if (uris != null && uris.length > 0) {
