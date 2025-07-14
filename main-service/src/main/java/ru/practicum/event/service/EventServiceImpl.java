@@ -94,7 +94,7 @@ public class EventServiceImpl implements EventService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
 
-        if (event.getInitiator().getId() != userId) {
+        if (!event.getInitiator().getId().equals(userId)) {
             throw new ForbiddenException("Только инициатор может изменить событие");
         }
 
