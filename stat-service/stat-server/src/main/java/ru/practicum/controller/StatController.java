@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatDto;
-import ru.practicum.exceptions.ValidationRequestException;
 import ru.practicum.service.StatService;
 
 import java.time.LocalDateTime;
