@@ -38,8 +38,11 @@ public class CompilationServiceImpl implements CompilationService {
         } else {
             compilations = compilationRepository.findAll(PageRequest.of(from / size, size)).getContent();
         }
-        return !compilations.isEmpty() ? compilations.stream().map(CompilationMapper::toCompilationDto)
-                                                     .collect(Collectors.toList()) : Collections.emptyList();
+        return !compilations.isEmpty() ?
+                        compilations.stream()
+                                .map(CompilationMapper::toCompilationDto)
+                                .collect(Collectors.toList())
+                        : Collections.emptyList(); 
     }
 
     @Override
