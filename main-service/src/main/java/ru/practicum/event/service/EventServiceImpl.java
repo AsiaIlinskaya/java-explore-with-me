@@ -60,17 +60,14 @@ public class EventServiceImpl implements EventService {
             throw new ValidationRequestException("Лимит участников не может быть отрицательным");
         }
 
-        Event event = toEvent(newEventDto);
+        Event event = EventMapper.toEvent(
+                newEventDto,
+                user,
+                category,
+                locationRepository.save(LocationMapper.toLocation(newEventDto.getLocation())));        
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationRequestException("Событие должно начинаться минимум через 2 часа");
         }
-        event.setCreatedOn(LocalDateTime.now());
-        event.setInitiator(user);
-        event.setCategory(category);
-        event.setState(EventState.PENDING);
-        event.setLocation(locationRepository.save(toLocation(newEventDto.getLocation())));
-        event.setViews(0L);
-
         return toEventFullDto(eventRepository.save(event));
     }
 
