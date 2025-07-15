@@ -20,6 +20,7 @@ import ru.practicum.event.model.StateAdminAction;
 import ru.practicum.event.model.StateUserAction;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exceptions.*;
+import ru.practicum.location.mapper.LocationMapper;
 import ru.practicum.location.model.Location;
 import ru.practicum.location.repository.LocationRepository;
 import ru.practicum.user.model.User;
@@ -32,9 +33,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.event.mapper.EventMapper.toEvent;
 import static ru.practicum.event.mapper.EventMapper.toEventFullDto;
-import static ru.practicum.location.mapper.LocationMapper.toLocation;
 
 @Service
 @RequiredArgsConstructor
