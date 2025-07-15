@@ -38,18 +38,18 @@ public class CompilationServiceImpl implements CompilationService {
         } else {
             compilations = compilationRepository.findAll(PageRequest.of(from / size, size)).getContent();
         }
-        return !compilations.isEmpty() ?
-                        compilations.stream()
-                                .map(CompilationMapper::toCompilationDto)
-                                .collect(Collectors.toList())
-                        :Collections.emptyList(); 
+        return !compilations.isEmpty() 
+                ? compilations.stream()
+                        .map(CompilationMapper::toCompilationDto)
+                        .collect(Collectors.toList())
+                : Collections.emptyList();
     }
 
     @Override
     public CompilationDto getCompilationById(Long compId) {
         log.info("Получение селекций событий по ID = " + compId);
         return toCompilationDto(compilationRepository.findById(compId)
-                                                     .orElseThrow(() -> new CompilationNotFoundException(compId)));
+                .orElseThrow(() -> new CompilationNotFoundException(compId)));
     }
 
     @Override
