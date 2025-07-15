@@ -21,17 +21,22 @@ import static ru.practicum.user.mapper.UserMapper.toUserShortDto;
 public class EventMapper {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static Event toEvent(NewEventDto newEventDto) {
+    public static Event toEvent(NewEventDto newEventDto, User initiator, Category category, Location location) {
         return Event.builder()
-                    .title(newEventDto.getTitle())
-                    .annotation(newEventDto.getAnnotation())
-                    .description(newEventDto.getDescription())
-                    .eventDate(LocalDateTime.parse(newEventDto.getEventDate(), formatter))
-                    .location(toLocation(newEventDto.getLocation()))
-                    .paid(newEventDto.isPaid())
-                    .participantLimit(newEventDto.getParticipantLimit())
-                    .requestModeration(newEventDto.isRequestModeration())
-                    .build();
+                .title(newEventDto.getTitle())
+                .annotation(newEventDto.getAnnotation())
+                .description(newEventDto.getDescription())
+                .eventDate(LocalDateTime.parse(newEventDto.getEventDate(), formatter))
+                .location(location)
+                .paid(newEventDto.isPaid())
+                .participantLimit(newEventDto.getParticipantLimit())
+                .requestModeration(newEventDto.isRequestModeration())
+                .initiator(initiator)
+                .category(category)
+                .createdOn(LocalDateTime.now())
+                .state(EventState.PENDING)
+                .views(0L)
+                .build();
     }
 
     public static EventFullDto toEventFullDto(Event event) {
