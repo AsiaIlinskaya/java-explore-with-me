@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.dto.NewCategoryDto;
@@ -13,7 +14,6 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exceptions.CategoryNotFoundException;
 import ru.practicum.exceptions.ForbiddenException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,16 +32,16 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> getCategories(int from, int size) {
         log.info("Получение списка категорий: from = {}, size = {}", from, size);
         return categoryRepository.findAll(PageRequest.of(from / size, size))
-                                 .stream()
-                                 .map(CategoryMapper::toCategoryDto)
-                                 .collect(Collectors.toList());
+                .stream()
+                .map(CategoryMapper::toCategoryDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public CategoryDto getCategoryById(long catId) {
         log.info("Получение информации о категории с ID: cat_id = {}", catId);
         return toCategoryDto(categoryRepository.findById(catId)
-                                               .orElseThrow(() -> new CategoryNotFoundException(catId)));
+                .orElseThrow(() -> new CategoryNotFoundException(catId)));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(long catId, NewCategoryDto newCategoryDto) {
         log.info("Обновление категории: cat_id = {}, category = {}", catId, newCategoryDto);
         Category existCategory = categoryRepository.findById(catId)
-                                                   .orElseThrow(() -> new CategoryNotFoundException(catId));
+                .orElseThrow(() -> new CategoryNotFoundException(catId));
         Category updatedCategory = toCategory(newCategoryDto);
         updatedCategory.setId(existCategory.getId());
         return toCategoryDto(categoryRepository.save(updatedCategory));
@@ -67,10 +67,10 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(long catId) {
         log.info("Удаление категории: cat_id = {}", catId);
         categoryRepository.findById(catId)
-                          .orElseThrow(() -> new CategoryNotFoundException(catId));
+                .orElseThrow(() -> new CategoryNotFoundException(catId));
         Event event = eventRepository.findFirstByCategoryId(catId);
         if (event != null) {
-            throw new ForbiddenException(String.format("Категория с id = %d не пустая", catId));
+            throw new ForbiddenException("Категория с id = {} не пустая", catId);
         }
         categoryRepository.deleteById(catId);
     }
