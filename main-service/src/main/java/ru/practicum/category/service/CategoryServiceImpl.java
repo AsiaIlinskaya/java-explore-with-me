@@ -70,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
                           .orElseThrow(() -> new CategoryNotFoundException(catId));
         Event event = eventRepository.findFirstByCategoryId(catId);
         if (event != null) {
-            throw new ForbiddenException("Категория с id = {} не пустая", catId);
+            throw new ForbiddenException(String.format("Категория с id = %d не пустая", catId));
         }
         categoryRepository.deleteById(catId);
     }
