@@ -1,19 +1,22 @@
 package ru.practicum.event.mapper;
 
 import lombok.NoArgsConstructor;
+import ru.practicum.category.model.Category;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.model.EventState;
+import ru.practicum.location.model.Location;
 import ru.practicum.request.model.Request;
 import ru.practicum.request.model.RequestStatus;
+import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static ru.practicum.category.mapper.CategoryMapper.toCategoryDto;
-import static ru.practicum.location.mapper.LocationMapper.toLocation;
 import static ru.practicum.location.mapper.LocationMapper.toLocationDto;
 import static ru.practicum.user.mapper.UserMapper.toUserShortDto;
 
