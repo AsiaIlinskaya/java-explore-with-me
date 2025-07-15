@@ -30,8 +30,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getCategories(int from, int size) {
-        log.info("Получение списка категорий: from = " + from + ", size = " + size);
-        return categoryRepository.findAll(PageRequest.of(from / size, size))
+    log.info("Получение списка категорий: from = {}, size = {}", from, size);
+         return categoryRepository.findAll(PageRequest.of(from / size, size))
                                  .stream()
                                  .map(CategoryMapper::toCategoryDto)
                                  .collect(Collectors.toList());
@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(long catId) {
-        log.info("Получение информации о категории с ID: cat_id = " + catId);
+    log.info("Получение информации о категории с ID: cat_id = {}", catId);
         return toCategoryDto(categoryRepository.findById(catId)
                                                .orElseThrow(() -> new CategoryNotFoundException(catId)));
     }
@@ -47,14 +47,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
-        log.info("Добавление новой категории: category name = " + newCategoryDto);
+    log.info("Добавление новой категории: category name = {}", newCategoryDto);
         return toCategoryDto(categoryRepository.save(toCategory(newCategoryDto)));
     }
 
     @Override
     @Transactional
     public CategoryDto updateCategory(long catId, NewCategoryDto newCategoryDto) {
-        log.info("Обновление категории: cat_id = " + catId + ", category name = " + newCategoryDto);
+    log.info("Обновление категории: cat_id = {}, category name = {}", catId, newCategoryDto);
         Category existCategory = categoryRepository.findById(catId)
                                                    .orElseThrow(() -> new CategoryNotFoundException(catId));
         Category updatedCategory = toCategory(newCategoryDto);
@@ -65,12 +65,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(long catId) {
-        log.info("Удаление категории: cat_id = " + catId);
+    log.info("Удаление категории: cat_id = {}", catId);
         categoryRepository.findById(catId)
                           .orElseThrow(() -> new CategoryNotFoundException(catId));
         Event event = eventRepository.findFirstByCategoryId(catId);
         if (event != null) {
-            throw new ForbiddenException("Категория не пустая");
+            throw new ForbiddenException("Категория с id = {} не пустая", catId);
         }
         categoryRepository.deleteById(catId);
     }
