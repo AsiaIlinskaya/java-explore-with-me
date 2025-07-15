@@ -42,7 +42,7 @@ public class CompilationServiceImpl implements CompilationService {
                         compilations.stream()
                                 .map(CompilationMapper::toCompilationDto)
                                 .collect(Collectors.toList())
-                        : Collections.emptyList(); 
+                        :Collections.emptyList(); 
     }
 
     @Override
