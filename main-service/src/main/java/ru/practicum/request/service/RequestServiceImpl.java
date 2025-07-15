@@ -80,7 +80,7 @@ public class RequestServiceImpl implements RequestService {
         userRepository.findById(userId)
                       .orElseThrow(() -> new UserNotFoundException(userId));
         Request request = requestRepository.findById(requestId)
-                                           .orElseThrow(() -> new ForbiddenException("Запрос не найден."));
+                                       .orElseThrow(() -> new ForbiddenException(String.format("Запрос с id = %d не найден.", requestId)));
 
         if (!request.getRequester().getId().equals(userId)) {
             throw new ForbiddenException("Можно отменить только собственный запрос.");
