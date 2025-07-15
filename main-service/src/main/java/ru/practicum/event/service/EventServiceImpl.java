@@ -63,7 +63,7 @@ public class EventServiceImpl implements EventService {
                 newEventDto,
                 user,
                 category,
-                locationRepository.save(LocationMapper.toLocation(newEventDto.getLocation())));        
+                locationRepository.save(LocationMapper.toLocation(newEventDto.getLocation())));
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationRequestException("Событие должно начинаться минимум через 2 часа");
         }
