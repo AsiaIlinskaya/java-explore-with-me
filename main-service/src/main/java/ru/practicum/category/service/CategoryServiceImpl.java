@@ -65,12 +65,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(long catId) {
-    log.info("Удаление категории: cat_id = {}", catId);
+        log.info("Удаление категории: cat_id = {}", catId);
         categoryRepository.findById(catId)
-                          .orElseThrow(() -> new CategoryNotFoundException(catId));
+                .orElseThrow(() -> new CategoryNotFoundException(catId));
         Event event = eventRepository.findFirstByCategoryId(catId);
         if (event != null) {
-            throw new ForbiddenException(String.format("Категория с id = %d не пустая", catId));        
+            throw new ForbiddenException(String.format("Категория с id = %d не пустая", catId));
         }
         categoryRepository.deleteById(catId);
     }
