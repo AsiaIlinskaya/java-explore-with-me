@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import ru.practicum.comment.dto.CommentMapper;
 import ru.practicum.comment.dto.CommentResponseDto;
 import ru.practicum.comment.dto.NewCommentDto;
-import ru.practicum.event.Event;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.EventRepository;
 import ru.practicum.event.EventState;
 import ru.practicum.exceptions.CommentNotFoundException;
 import ru.practicum.exceptions.EventNotFoundException;
 import ru.practicum.exceptions.ForbiddenException;
 import ru.practicum.exceptions.UserNotFoundException;
-import ru.practicum.user.User;
+import ru.practicum.user.model.User;
 import ru.practicum.user.UserRepository;
 
 import java.time.LocalDateTime;

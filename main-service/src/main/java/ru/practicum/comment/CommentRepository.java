@@ -2,7 +2,7 @@ package ru.practicum.comment;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.event.Event;
+import ru.practicum.event.model.Event;
 
 import java.util.List;
 
