@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.event.Event;
-import ru.practicum.user.User;
+import ru.practicum.event.model.Event;
+import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
