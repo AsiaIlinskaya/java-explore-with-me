@@ -5,8 +5,8 @@ import ru.practicum.comment.Comment;
 
 import java.time.format.DateTimeFormatter;
 
-import static ru.practicum.event.dto.EventMapper.toEventShortDto;
-import static ru.practicum.user.dto.UserMapper.toUserShortDto;
+import static ru.practicum.event.mapper.EventMapper.toEventShortDto;
+import static ru.practicum.user.mapper.UserMapper.toUserShortDto;
 
 @NoArgsConstructor
 public class CommentMapper {
