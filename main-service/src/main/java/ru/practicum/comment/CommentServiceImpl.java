@@ -9,14 +9,14 @@ import ru.practicum.comment.dto.CommentMapper;
 import ru.practicum.comment.dto.CommentResponseDto;
 import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.EventRepository;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.EventState;
 import ru.practicum.exceptions.CommentNotFoundException;
 import ru.practicum.exceptions.EventNotFoundException;
 import ru.practicum.exceptions.ForbiddenException;
 import ru.practicum.exceptions.UserNotFoundException;
 import ru.practicum.user.model.User;
-import ru.practicum.user.UserRepository;
+import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
