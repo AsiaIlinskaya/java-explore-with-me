@@ -36,81 +36,100 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentResponseDto createComment(Long userId, Long eventId, NewCommentDto newCommentDto) {
-        log.info("Создан комментарий с  ID = " + userId + ", для события с ID = " + eventId + ": " + newCommentDto);
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
-                .orElseThrow(() -> new EventNotFoundException(eventId));
-        Comment comment = toComment(newCommentDto);
-        comment.setEvent(event);
-        comment.setAuthor(user);
-        comment.setState(CommentState.PENDING);
-        comment.setCreatedOn(LocalDateTime.now());
+        log.info("Создан комментарий пользователем с ID = {}, для события с ID = {}", userId, eventId);
+        User user = getUserById(userId);
+        Event event = getPublishedEventById(eventId);
+
+        Comment comment = toComment(newCommentDto, user, event);
         return toCommentResponseDto(commentRepository.save(comment));
     }
 
     @Override
     public List<CommentResponseDto> getEventComments(Long eventId, int from, int size) {
-        log.info("Получить комментарии события с ID = " + eventId);
-        Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
-                .orElseThrow(() -> new EventNotFoundException(eventId));
+        log.info("Получить комментарии события с ID = {}", eventId);
+        Event event = getPublishedEventById(eventId);
         List<Comment> comments = commentRepository.findByEvent(event, PageRequest.of(from / size, size));
-        return comments.stream().map(CommentMapper::toCommentResponseDto).collect(Collectors.toList());
+        return comments.stream()
+                .map(CommentMapper::toCommentResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public CommentResponseDto getCommentById(Long commentId) {
-        log.info("Получить комментарий с ID = " + commentId);
-        return toCommentResponseDto(commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException(commentId)));
+        log.info("Получить комментарий с ID = {}", commentId);
+        return toCommentResponseDto(getCommentOrThrow(commentId));
     }
 
     @Override
     @Transactional
     public CommentResponseDto updateComment(Long userId, Long commentId, NewCommentDto newCommentDto) {
-        log.info("Обновить комментарий с ID = " + commentId + " от пользователя с ID = " + userId + ": " + newCommentDto);
-        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException(commentId));
-        if (!comment.getAuthor().getId().equals(userId)) {
-            throw new ForbiddenException("Нельзя обновить комментарий другого пользователя.");
-        }
-        if (comment.getState() == CommentState.CONFIRMED) {
-            throw new ForbiddenException("Нельзя обновить готовый комментарий.");
-        }
+        log.info("Обновить комментарий с ID = {} от пользователя с ID = {}", commentId, userId);
+        getUserById(userId);
+        Comment comment = getCommentOrThrow(commentId);
+
+        validateCommentOwnership(userId, comment);
+        validateCommentNotConfirmed(comment);
+
         comment.setText(newCommentDto.getText());
         comment.setUpdatedOn(LocalDateTime.now());
         comment.setState(CommentState.PENDING);
+
         return toCommentResponseDto(commentRepository.save(comment));
     }
 
     @Override
     @Transactional
     public void deleteComment(Long userId, Long commentId) {
-        log.info("Удалить комментарий с ID = " + commentId + " от пользователя с ID = " + userId);
-        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException(commentId));
-        if (!comment.getAuthor().getId().equals(userId)) {
-            throw new ForbiddenException("Нельзя обновить комментарий другого пользователя.");
-        }
-        if (comment.getState() == CommentState.CONFIRMED) {
-            throw new ForbiddenException("Нельзя удалить готовый комментарий.");
-        }
+        log.info("Удалить комментарий с ID = {} от пользователя с ID = {}", commentId, userId);
+        getUserById(userId);
+        Comment comment = getCommentOrThrow(commentId);
+
+        validateCommentOwnership(userId, comment);
+        validateCommentNotConfirmed(comment);
+
         commentRepository.deleteById(commentId);
     }
 
     @Override
     @Transactional
     public CommentResponseDto updateCommentStatusByAdmin(Long commentId, boolean isConfirm) {
-        log.info("Confirm/reject комментарий с ID = " + commentId + ". New state: " + isConfirm);
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException(commentId));
+        log.info("Confirm/reject комментарий с ID = {}. New state: {}", commentId, isConfirm);
+        Comment comment = getCommentOrThrow(commentId);
+
         if (isConfirm) {
             comment.setState(CommentState.CONFIRMED);
         } else {
             comment.setState(CommentState.REJECTED);
         }
         comment.setPublishedOn(LocalDateTime.now());
+
         return toCommentResponseDto(commentRepository.save(comment));
+    }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
+    private Event getPublishedEventById(Long eventId) {
+        return eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
+                .orElseThrow(() -> new EventNotFoundException(eventId));
+    }
+
+    private Comment getCommentOrThrow(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException(commentId));
+    }
+
+    private void validateCommentOwnership(Long userId, Comment comment) {
+        if (!comment.getAuthor().getId().equals(userId)) {
+            throw new ForbiddenException("Нельзя изменить комментарий другого пользователя.");
+        }
+    }
+
+    private void validateCommentNotConfirmed(Comment comment) {
+        if (comment.getState() == CommentState.CONFIRMED) {
+            throw new ForbiddenException("Нельзя изменить готовый комментарий.");
+        }
     }
 }
